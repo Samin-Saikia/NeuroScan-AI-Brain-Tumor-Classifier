@@ -6,4 +6,3 @@ venv/
 .venv/
 static/uploads/*
 !static/uploads/.gitkeep
-*.pkl
