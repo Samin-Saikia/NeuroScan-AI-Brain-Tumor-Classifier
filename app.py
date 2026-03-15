@@ -7,11 +7,11 @@ from PIL import Image
 import tensorflow as tf
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 # ── Model path ───────────────────────────────────────────────────────────
-MODEL_PATH = 'model/brain_tumor_model.h5'
+MODEL_PATH = 'model/brain_tumor_model.tflite'
 
 # ── Load class names ────────────────────────────────────────────────────
 with open('model/class_names.json') as f:
@@ -39,10 +39,13 @@ COLORS = {
     'pituitary_tumor'  : '#3498db',
 }
 
-# ── Load model ───────────────────────────────────────────────────────────
-print('Loading model...')
-model = tf.keras.models.load_model(MODEL_PATH)
-print('Model loaded successfully!')
+# ── Load TFLite model ────────────────────────────────────────────────────
+print('Loading TFLite model...')
+interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
+interpreter.allocate_tensors()
+input_details  = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
+print('TFLite model loaded successfully!')
 
 # ── Allowed file types ───────────────────────────────────────────────────
 ALLOWED = {'png', 'jpg', 'jpeg'}
@@ -58,6 +61,13 @@ def preprocess_image(img_path):
     arr = tf.keras.applications.mobilenet_v2.preprocess_input(arr)
     arr = np.expand_dims(arr, axis=0)
     return arr
+
+# ── TFLite inference ─────────────────────────────────────────────────────
+def predict_tflite(arr):
+    interpreter.set_tensor(input_details[0]['index'], arr)
+    interpreter.invoke()
+    preds = interpreter.get_tensor(output_details[0]['index'])
+    return preds[0]
 
 # ── Routes ────────────────────────────────────────────────────────────────
 @app.route('/')
@@ -75,40 +85,45 @@ def predict():
     if not allowed_file(file.filename):
         return jsonify({'error': 'Invalid file type. Use JPG or PNG.'}), 400
 
-    filename  = secure_filename(file.filename)
-    save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    file.save(save_path)
+    try:
+        filename  = secure_filename(file.filename)
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        file.save(save_path)
 
-    # Predict
-    arr   = preprocess_image(save_path)
-    preds = model.predict(arr, verbose=0)[0]
+        arr   = preprocess_image(save_path)
+        preds = predict_tflite(arr)
 
-    # Build results
-    top_idx   = int(np.argmax(preds))
-    top_class = CLASS_NAMES[top_idx]
-    top_conf  = float(preds[top_idx]) * 100
+        top_idx   = int(np.argmax(preds))
+        top_class = CLASS_NAMES[top_idx]
+        top_conf  = float(preds[top_idx]) * 100
 
-    all_preds = [
-        {
-            'label'      : CLASS_NAMES[i],
-            'display'    : DISPLAY_NAMES[CLASS_NAMES[i]],
-            'confidence' : round(float(preds[i]) * 100, 2),
-            'color'      : COLORS[CLASS_NAMES[i]],
-        }
-        for i in range(len(CLASS_NAMES))
-    ]
-    all_preds.sort(key=lambda x: x['confidence'], reverse=True)
+        all_preds = [
+            {
+                'label'      : CLASS_NAMES[i],
+                'display'    : DISPLAY_NAMES[CLASS_NAMES[i]],
+                'confidence' : round(float(preds[i]) * 100, 2),
+                'color'      : COLORS[CLASS_NAMES[i]],
+            }
+            for i in range(len(CLASS_NAMES))
+        ]
+        all_preds.sort(key=lambda x: x['confidence'], reverse=True)
 
-    return jsonify({
-        'prediction'  : DISPLAY_NAMES[top_class],
-        'confidence'  : round(top_conf, 2),
-        'description' : DESCRIPTIONS[top_class],
-        'color'       : COLORS[top_class],
-        'all_preds'   : all_preds,
-        'image_url'   : '/' + save_path,
-        'is_normal'   : top_class == 'normal',
-    })
+        return jsonify({
+            'prediction'  : DISPLAY_NAMES[top_class],
+            'confidence'  : round(top_conf, 2),
+            'description' : DESCRIPTIONS[top_class],
+            'color'       : COLORS[top_class],
+            'all_preds'   : all_preds,
+            'image_url'   : '/' + save_path,
+            'is_normal'   : top_class == 'normal',
+        })
+
+    except Exception as e:
+        print(f'PREDICTION ERROR: {str(e)}')
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/about')
 def about():
