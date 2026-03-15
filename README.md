@@ -18,7 +18,7 @@
 
 ## 🌐 Live Demo
 
-**[https://NeuroScan-AI-Brain-Tumor-Classifier.onrender.com](https://NeuroScan-AI-Brain-Tumor-Classifier.onrender.com)**
+**[https://neuroscan-ai-brain-tumor-classifier.onrender.com](https://neuroscan-ai-brain-tumor-classifier.onrender.com)**
 > ⚠️ Hosted on Render free tier — the app may take 30–60 seconds to wake up on first visit.
 
 ---
