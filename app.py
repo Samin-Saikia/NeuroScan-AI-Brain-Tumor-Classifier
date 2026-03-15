@@ -1,6 +1,5 @@
 import os
 import json
-import pickle
 import numpy as np
 from flask import Flask, request, render_template, jsonify
 from werkzeug.utils import secure_filename
@@ -12,7 +11,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 # ── Model path ───────────────────────────────────────────────────────────
-MODEL_PATH = 'model/brain_tumor_model.pkl'
+MODEL_PATH = 'model/brain_tumor_model.h5'
 
 # ── Load class names ────────────────────────────────────────────────────
 with open('model/class_names.json') as f:
@@ -40,10 +39,9 @@ COLORS = {
     'pituitary_tumor'  : '#3498db',
 }
 
-# ── Load model from pickle ───────────────────────────────────────────────
+# ── Load model ───────────────────────────────────────────────────────────
 print('Loading model...')
-with open(MODEL_PATH, 'rb') as f:
-    model = pickle.load(f)
+model = tf.keras.models.load_model(MODEL_PATH)
 print('Model loaded successfully!')
 
 # ── Allowed file types ───────────────────────────────────────────────────

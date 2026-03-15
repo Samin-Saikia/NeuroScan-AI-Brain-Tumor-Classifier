@@ -84,7 +84,7 @@ NeuroScan-AI-Brain-Tumor-Classifier/
 │       └── .gitkeep
 │
 ├── model/
-│   ├── brain_tumor_model.pkl    # Trained MobileNetV2 model (~25MB)
+│   ├── brain_tumor_model.h5   # Trained MobileNetV2 model (~25MB)
 │   └── class_names.json         # Ordered list of class labels
 │
 ├── .python-version              # Pins Python 3.10.14 for Render
