@@ -1,7 +1,6 @@
 import os
 import json
 import numpy as np
-import gdown
 from flask import Flask, request, render_template, jsonify
 from werkzeug.utils import secure_filename
 from PIL import Image
@@ -11,15 +10,14 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
-# ── Google Drive model file ID ──────────────────────────────────────────
-GDRIVE_FILE_ID = '1YEiHkPQGHcXkSxaQHb5aFEdRBXjUYIg9'
-MODEL_PATH     = 'model/brain_tumor_model.h5'
+# ── Model path ───────────────────────────────────────────────────────────
+MODEL_PATH = 'model/brain_tumor_model.h5'
 
 # ── Load class names ────────────────────────────────────────────────────
 with open('model/class_names.json') as f:
     CLASS_NAMES = json.load(f)
 
-# Pretty display names
+# ── Pretty display names ─────────────────────────────────────────────────
 DISPLAY_NAMES = {
     'glioma_tumor'     : 'Glioma Tumor',
     'meningioma_tumor' : 'Meningioma Tumor',
@@ -41,22 +39,10 @@ COLORS = {
     'pituitary_tumor'  : '#3498db',
 }
 
-# ── Download model from Google Drive if not present ─────────────────────
-def download_model():
-    if not os.path.exists(MODEL_PATH):
-        print('Downloading model from Google Drive...')
-        os.makedirs('model', exist_ok=True)
-        url = f'https://drive.google.com/uc?export=download&confirm=t&id={GDRIVE_FILE_ID}'
-        gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
-        print('Model downloaded!')
-    else:
-        print('Model already exists, skipping download.')
-
-# ── Load model ──────────────────────────────────────────────────────────
-download_model()
+# ── Load model (bundled in repo) ─────────────────────────────────────────
 print('Loading model...')
 model = tf.keras.models.load_model(MODEL_PATH)
-print('Model loaded!')
+print('Model loaded successfully!')
 
 # ── Allowed file types ───────────────────────────────────────────────────
 ALLOWED = {'png', 'jpg', 'jpeg'}
@@ -130,3 +116,4 @@ def about():
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5000)
+    

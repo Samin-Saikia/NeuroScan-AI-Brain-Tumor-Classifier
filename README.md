@@ -6,8 +6,8 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10-blue?style=flat-square&logo=python"/>
-  <img src="https://img.shields.io/badge/TensorFlow-2.15-orange?style=flat-square&logo=tensorflow"/>
-  <img src="https://img.shields.io/badge/Flask-3.0-black?style=flat-square&logo=flask"/>
+  <img src="https://img.shields.io/badge/TensorFlow-2.21-orange?style=flat-square&logo=tensorflow"/>
+  <img src="https://img.shields.io/badge/Flask-3.1-black?style=flat-square&logo=flask"/>
   <img src="https://img.shields.io/badge/Deployed-Render-46E3B7?style=flat-square&logo=render"/>
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square"/>
 </p>
@@ -56,7 +56,7 @@ Upload any brain MRI scan image (JPG or PNG) and the model will:
 | Training Images | 2,165 |
 | Validation Images | 462 |
 | Test Images | 469 |
-| Framework | TensorFlow 2.15 / Keras |
+| Framework | TensorFlow 2.21 / Keras |
 
 ### Confusion Matrix — Test Set
 
@@ -69,7 +69,7 @@ Upload any brain MRI scan image (JPG or PNG) and the model will:
 ## 🗂️ Project Structure
 
 ```
-brain-tumor-classifier/
+NeuroScan-AI-Brain-Tumor-Classifier/
 │
 ├── app.py                       # Flask application — routes, model loading, inference
 │
@@ -84,17 +84,17 @@ brain-tumor-classifier/
 │       └── .gitkeep
 │
 ├── model/
+│   ├── brain_tumor_model.h5     # Trained MobileNetV2 model (~25MB)
 │   └── class_names.json         # Ordered list of class labels
 │
+├── .python-version              # Pins Python 3.10.14 for Render
 ├── requirements.txt             # Python dependencies
 ├── Procfile                     # Gunicorn start command for Render
 ├── render.yaml                  # Render deployment config
-├── .gitignore                   # Ignores model weights, venv, uploads
+├── .gitignore                   # Ignores venv, pycache, uploads
 ├── LICENSE                      # MIT License
 └── README.md                    # This file
 ```
-
-> **Note:** The trained model file (`brain_tumor_model.h5`) is NOT stored in this repo due to GitHub file size limits. It is hosted on Google Drive and automatically downloaded by `app.py` on first startup via `gdown`.
 
 ---
 
@@ -103,11 +103,10 @@ brain-tumor-classifier/
 | Layer | Technology |
 |---|---|
 | Model Training | Google Colab (T4 GPU) |
-| Deep Learning | TensorFlow 2.15 / Keras |
+| Deep Learning | TensorFlow 2.21 / Keras |
 | Base Model | MobileNetV2 (ImageNet weights) |
-| Backend | Python 3.10, Flask 3.0 |
+| Backend | Python 3.10, Flask 3.1 |
 | Server | Gunicorn |
-| Model Storage | Google Drive + gdown |
 | Deployment | Render.com (Free Tier) |
 | Frontend | HTML5, CSS3, Vanilla JS |
 
@@ -125,7 +124,7 @@ The model was trained using a **two-phase transfer learning** approach in Google
 
 ### Phase 2 — Fine-Tuning
 - Top 30 layers of MobileNetV2 were **unfrozen**
-- Trained end-to-end with a low learning rate: `5e-5`
+- Trained end-to-end with a lower learning rate: `5e-5`
 - Epochs: up to 40 with `EarlyStopping`
 - Final validation accuracy: **88.1%**
 
@@ -140,22 +139,22 @@ The model was trained using a **two-phase transfer learning** approach in Google
 ### Augmentation (Training only)
 - Horizontal flip
 - Random rotation ±5°
-- Random zoom ±5%
+- Random zoom ±5°
 
 ---
 
 ## ⚙️ Local Setup
 
 ### Prerequisites
-- Python 3.8–3.11
+- Python 3.10
 - pip
 
 ### Steps
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Samin-Saikia/NeuroScan-AI-Brain-Tumor-Classifier
-cd brain-tumor-classifier
+git clone https://github.com/Samin-Saikia/NeuroScan-AI-Brain-Tumor-Classifier.git
+cd NeuroScan-AI-Brain-Tumor-Classifier
 
 # 2. Create a virtual environment (recommended)
 python -m venv venv
@@ -172,7 +171,7 @@ python app.py
 # http://localhost:5000
 ```
 
-> On first run, the app will automatically download `brain_tumor_model.h5` (~25MB) from Google Drive into the `model/` folder. This requires an internet connection and takes about 30 seconds.
+> The model file (`brain_tumor_model.h5`) is bundled directly in the repo under `model/` — no download step required.
 
 ---
 
@@ -187,9 +186,9 @@ python app.py
 |---|---|
 | Runtime | Python 3 |
 | Build Command | `pip install -r requirements.txt` |
-| Start Command | `gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 1` |
+| Start Command | `gunicorn app:app --bind 0.0.0.0:${PORT:-5000} --timeout 120 --workers 1` |
 
-5. Click **Deploy** — first deploy takes ~5 minutes (installs deps + downloads model)
+5. Click **Deploy** — first deploy takes ~3–5 minutes
 6. Your app is live at `https://your-app-name.onrender.com` 🎉
 
 ---
@@ -197,13 +196,12 @@ python app.py
 ## 📦 Dependencies
 
 ```
-flask==3.0.0
-tensorflow-cpu==2.15.0
-Pillow==10.2.0
-numpy==1.26.4
-gdown==5.1.0
-werkzeug==3.0.1
-gunicorn==21.2.0
+flask
+tensorflow-cpu
+Pillow
+numpy
+werkzeug
+gunicorn
 ```
 
 ---
