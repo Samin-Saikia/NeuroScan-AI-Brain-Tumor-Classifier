@@ -1,0 +1,7 @@
+flask
+tensorflow-cpu
+Pillow
+numpy
+gdown
+werkzeug
+gunicorn

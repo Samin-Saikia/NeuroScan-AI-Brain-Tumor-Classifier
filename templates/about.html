@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — NeuroScan AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060a0f; --surface: #0d1520; --surface2: #111d2e;
+      --border: #1e3050; --accent: #00d4ff; --accent2: #0099cc;
+      --text: #e8f4f8; --muted: #5a7a9a;
+      --mono: 'Space Mono', monospace; --sans: 'DM Sans', sans-serif;
+    }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px; pointer-events: none; z-index: 0;
+    }
+    header {
+      position: relative; z-index: 10; border-bottom: 1px solid var(--border);
+      padding: 0 2rem; display: flex; align-items: center; justify-content: space-between;
+      height: 64px; backdrop-filter: blur(10px); background: rgba(6,10,15,0.8);
+    }
+    .logo { font-family: var(--mono); font-size: 1rem; color: var(--accent); letter-spacing: 0.1em; display: flex; align-items: center; gap: 0.6rem; }
+    .logo-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.85rem; margin-left: 2rem; transition: color 0.2s; font-family: var(--mono); }
+    nav a:hover { color: var(--accent); }
+
+    .container { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+
+    .page-tag { display: inline-block; font-family: var(--mono); font-size: 0.7rem; color: var(--accent); border: 1px solid var(--accent); padding: 0.3rem 0.8rem; border-radius: 2px; letter-spacing: 0.15em; margin-bottom: 1.5rem; text-transform: uppercase; }
+    h1 { font-family: var(--mono); font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .page-sub { color: var(--muted); font-size: 0.95rem; margin-bottom: 3rem; line-height: 1.6; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section-title { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 1.5rem; }
+    .info-cell { background: var(--surface); padding: 1rem 1.2rem; }
+    .info-key { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+    .info-val { font-size: 0.9rem; color: var(--text); }
+    @media (max-width: 500px) { .info-grid { grid-template-columns: 1fr; } }
+
+    p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem; }
+
+    .class-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    .class-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; }
+    .class-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .class-name { font-family: var(--mono); font-size: 0.8rem; margin-bottom: 0.2rem; }
+    .class-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+    .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .charts { grid-template-columns: 1fr; } }
+    .chart-img { width: 100%; border: 1px solid var(--border); border-radius: 3px; display: block; }
+
+    .disclaimer { margin-top: 2rem; padding: 1rem 1.2rem; border: 1px solid #2a1a00; background: rgba(230,126,34,0.05); border-radius: 2px; font-size: 0.8rem; color: #e67e22; line-height: 1.6; }
+    footer { position: relative; z-index: 1; text-align: center; padding: 2rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--muted); font-family: var(--mono); }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo"><div class="logo-dot"></div>NEUROSCAN_AI</div>
+  <nav><a href="/">Classify</a><a href="/about">About</a></nav>
+</header>
+
+<div class="container">
+  <div class="page-tag">⬡ Model Details</div>
+  <h1>About This Project</h1>
+  <p class="page-sub">A deep learning classifier for brain tumor detection from MRI scans, built with TensorFlow and deployed with Flask.</p>
+
+  <div class="section">
+    <div class="section-title">Model Specifications</div>
+    <div class="info-grid">
+      <div class="info-cell"><div class="info-key">Architecture</div><div class="info-val">MobileNetV2 (Transfer Learning)</div></div>
+      <div class="info-cell"><div class="info-key">Input Size</div><div class="info-val">224 × 224 × 3 (RGB)</div></div>
+      <div class="info-cell"><div class="info-key">Val Accuracy</div><div class="info-val" style="color:#00d4ff">88.1%</div></div>
+      <div class="info-cell"><div class="info-key">Dataset</div><div class="info-val">Brain Tumors 256×256 (Kaggle)</div></div>
+      <div class="info-cell"><div class="info-key">Pretrained On</div><div class="info-val">ImageNet</div></div>
+      <div class="info-cell"><div class="info-key">Framework</div><div class="info-val">TensorFlow / Keras</div></div>
+      <div class="info-cell"><div class="info-key">Train Images</div><div class="info-val">2,165</div></div>
+      <div class="info-cell"><div class="info-key">Test Images</div><div class="info-val">469</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Classes</div>
+    <div class="class-list">
+      <div class="class-item">
+        <div class="class-dot" style="background:#e74c3c"></div>
+        <div><div class="class-name" style="color:#e74c3c">Glioma Tumor</div><div class="class-desc">Tumors arising from glial cells in the brain or spine. Accounts for ~33% of all brain tumors. Includes glioblastoma, astrocytoma, and oligodendroglioma.</div></div>
+      </div>
+      <div class="class-item">
+        <div class="class-dot" style="background:#e67e22"></div>
+        <div><div class="class-name" style="color:#e67e22">Meningioma Tumor</div><div class="class-desc">Arises from the meninges surrounding the brain and spinal cord. Most are benign and slow-growing. Most common primary brain tumor.</div></div>
+      </div>
+      <div class="class-item">
+        <div class="class-dot" style="background:#2ecc71"></div>
+        <div><div class="class-name" style="color:#2ecc71">Normal (No Tumor)</div><div class="class-desc">No signs of tumor present. Brain tissue appears healthy with no abnormal masses detected in the MRI scan.</div></div>
+      </div>
+      <div class="class-item">
+        <div class="class-dot" style="background:#3498db"></div>
+        <div><div class="class-name" style="color:#3498db">Pituitary Tumor</div><div class="class-desc">Forms in the pituitary gland at the base of the brain. Most are benign adenomas. Can affect hormone production.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Training Results</div>
+    <div class="charts">
+      <img src="/static/training_curves.png" alt="Training curves" class="chart-img"/>
+      <img src="/static/confusion_matrix.png" alt="Confusion matrix" class="chart-img"/>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Training Pipeline</div>
+    <p>The model was trained in Google Colab using a two-phase approach. Phase 1 froze the MobileNetV2 base and trained only the custom classification head. Phase 2 unfroze the top layers for fine-tuning with a lower learning rate. Data was manually split 70/15/15 into train/val/test sets with light augmentation (horizontal flip, 5° rotation, 5% zoom).</p>
+    <p>The dataset was sourced from Kaggle (thomasdubail/brain-tumors-256x256) and contains 256×256 grayscale MRI images resized to 224×224 for MobileNetV2 compatibility.</p>
+  </div>
+
+  <div class="disclaimer">
+    <strong>⚠ MEDICAL DISCLAIMER:</strong> This tool is built for educational and portfolio purposes only.
+    It is NOT intended for clinical use and should NOT be used as a substitute for professional medical advice,
+    diagnosis, or treatment. Always consult a qualified medical professional for health concerns.
+  </div>
+</div>
+
+<footer>Built with TensorFlow · MobileNetV2 · Flask · Render &nbsp;|&nbsp; <a href="/">← Back to Classifier</a></footer>
+</body>
+</html>
