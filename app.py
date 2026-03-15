@@ -41,7 +41,7 @@ COLORS = {
 
 # ── Load model (bundled in repo) ─────────────────────────────────────────
 print('Loading model...')
-model = tf.keras.models.load_model(MODEL_PATH)
+model = tf.keras.models.load_model(MODEL_PATH, compile=False, safe_mode=False)
 print('Model loaded successfully!')
 
 # ── Allowed file types ───────────────────────────────────────────────────
@@ -116,4 +116,3 @@ def about():
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5000)
-    
