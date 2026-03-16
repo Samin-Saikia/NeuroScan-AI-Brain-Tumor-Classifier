@@ -1,0 +1,3 @@
+# Attribute specific language percentages
+*.html linguist-detectable=true
+*.html linguist-language=HTML linguist-language=CSS linguist-language=JavaScript
